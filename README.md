@@ -1,1 +1,1 @@
-# quant_methods_HWR_23-24
+# Quantitative Methods for Economists - HWR Berlin, Winter term 2021-2022
