@@ -1,0 +1,60 @@
+---
+title: "Class 1 - 09.10.2023"
+author: "Alessandro Bramucci"
+output:
+  pdf_document
+---
+
+# Matrix inversion
+
+R can perform standard matrix algebra operations. We can use matrix algebra functions in R to solve our problem from class.
+
+\begin{align*} 
+7x +5y -3z &= 16 \\
+3x -5y +2z &= -8 \\
+5x +3y -7z &= 0
+\end{align*}
+
+First, we rewrite the system using matrix and vector notation:
+
+$$
+\mathbf{A} = \left[\begin{array}
+{rrr}
+7 & 5 & -3 \\
+3 & -5 & 2 \\
+5 & 3 & -7 \\
+\end{array}\right]
+\mathbf{b} = \left[\begin{array}
+{rrr}
+x \\
+y \\
+z \\
+\end{array}\right]
+\mathbf{r} = \left[\begin{array}
+{rrr}
+16 \\
+-8 \\
+0 \\
+\end{array}\right]
+$$
+
+In order to obtain the result vector *b*, we have to use some simple matrix algebra operations.
+
+$$ \mathbf{A}^{-1}\mathbf{A}\mathbf{b} = \mathbf{A}^{-1}\mathbf{r} $$ 
+$$ \text{remember that} \space \mathbf{A}^{-1}\mathbf{A} = \mathbf{I} $$
+$$ \mathbf{b} = \mathbf{A}^{-1}\mathbf{r}$$
+
+
+We are now ready to solve our system of equations using R:
+
+```{r}
+data <- c(7, 5, -3, 3, -5, 2, 5, 3, -7)
+
+A <- matrix(data, nrow = 3, ncol = 3, byrow = TRUE)
+
+r <- c(16, -8, 0)
+
+b <- solve(A) %*% r
+
+b
+```
