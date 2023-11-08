@@ -33,6 +33,7 @@ plot.ecdf(percentile)
 percentile(4)*100
 percentile(15)*100
 
+# Homemade ecdf 
 plot(x = sort(x), 
      y = (1:length(x))/length(x), 
      type = "s",
@@ -47,7 +48,7 @@ axis(2, at = seq(0, 1, by = 0.1))
 # Let's use again the nearest rank method instead of the in-built ecdf function
 # P = n / N * 100
 # Let's first find the rank (n) of the value 4 and 15 by looking at the original set
-P_new <- c(which(a==4), which(a==15)) / N * 100
+P_new <- c(which(x==4), which(x==15)) / N * 100
 P_new
 
 # 4.3) Boxplot
