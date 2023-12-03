@@ -1,0 +1,77 @@
+---
+title: "Regression with quadratics"
+output:
+  pdf_document:
+    toc: no
+---
+
+```{r setup, message = FALSE, include=FALSE, warning=FALSE}
+library(wooldridge)
+library(stargazer)
+```
+
+Suppose we have the following model that includes a square term (of the variable *exper*). Note that the model is still linear in the parameters.
+
+$$wage = \beta_0 + \beta_1 exper + \beta_2 exper^2 + u$$
+
+In this model, we cannot interpret the partial effect of experience on hourly wage, keeping experience squared constant. For this reason, in order to interpret the partial effect of experience on wage we have to differentiate the wage function with respect to experience. By including the squared experience term, we are able to capture the diminishing effect of experience on wage. After which years of experience the returns of experience on hourly wage start to become negative?
+
+
+$$ \frac{\partial wage}{\partial exper}  = \beta_1 + 2\beta_2 exper$$
+
+$$ \beta_1 + 2\beta_2 exper = 0 $$
+
+$$exper = - \frac{\beta_1}{(2\beta_2)} $$ 
+
+```{r, collapse=TRUE}
+reg0 <- lm(wage1$wage ~ wage1$exper)
+reg <- lm(wage1$wage ~ wage1$exper + I(wage1$exper^2))
+beta1 <- unname(reg$coefficients[2])
+beta2 <- unname(reg$coefficients[3])
+```
+
+A first year of experience increases hourly wage on average by (dollar cents):
+
+```{r, collapse=TRUE}
+beta1 + beta2*2*1
+```
+
+However, if a person has already 10 years of experience, an additional year of experience yields a smaller return on hourly wage (dollar cents):
+
+```{r, collapse=TRUE}
+beta1 + beta2*2*10
+```
+
+After 24 years of experience, an additional year of experience will provide a negative yield on hourly wage.
+
+```{r, collapse=TRUE}
+maximum <- beta1 / (-2*beta2)
+maximum
+```
+
+Just to check..
+
+```{r, collapse=TRUE}
+beta1 + beta2*2*23
+beta1 + beta2*2*24
+beta1 + beta2*2*maximum
+beta1 + beta2*2*25
+beta1 + beta2*2*26
+```
+
+```{r, echo = FALSE, results = 'asis', message = FALSE, warning = FALSE}
+stargazer(reg0,
+          reg, 
+          type = "latex", 
+          keep.stat = c("n", "rsq"), 
+          header = FALSE)
+```
+
+```{r, echo = FALSE}
+parabola <- function(x) {x^2*reg$coefficients[3] + x*reg$coefficients[2] + reg$coefficients[1]}
+plot(wage1$exper, wage1$wage, main = "Decreasing returns of experience", ylab = "Hourly wage (in $)", xlab = "Years of experience")
+curve(parabola, from =  -10, to = 50, add = TRUE)
+segments(maximum, 0, x1 = maximum, y1 = parabola(maximum), col = "blue", lty = 3)
+segments(maximum-7, parabola(maximum), x1 = maximum+7, y1 = parabola(maximum), col = "blue", lty = 3)
+points(maximum, parabola(maximum), col = "blue", pch = 19, cex = 1)
+```
