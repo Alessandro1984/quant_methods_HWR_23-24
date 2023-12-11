@@ -1,0 +1,81 @@
+---
+title: 'Class 10'
+subtitle: 'Quantitative Methods for Economists'
+author: "Alessandro Bramucci"
+date: "`r format(Sys.time(), '%d-%m-%Y')`"
+output:
+  pdf_document: default
+---
+
+```{r, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE,
+                      message = FALSE,
+                      warning = FALSE)
+
+library(dplyr)
+library(wooldridge)
+library(stargazer)
+
+```
+
+# Title
+
+Some text...
+
+```{r, echo = FALSE}
+reg1 <- lm(wage ~ educ, data = wage1)
+reg2 <- lm(wage ~ educ + female, data = wage1)
+reg3 <- lm(wage ~ educ + female:educ, data = wage1)
+reg4 <- lm(wage ~ educ + female + female:educ, data = wage1)
+reg5 <- lm(wage ~ educ, data = wage1[wage1$female==1,])
+```
+
+```{r, echo = FALSE, results = "asis"}
+stargazer(reg1, reg2, reg3, reg4, reg5,
+          header = FALSE,
+          type = "latex", 
+          title = "Effect of education and gender on hourly wage. Source: Wooldridge (2023).",
+          keep.stat = c("N", "rsq", "adj.rsq"))
+```
+
+Some more text...
+
+```{r, echo = FALSE}
+wage1$gender <- ifelse(wage1$female == 0, "Male", "Female")
+
+cols <- c("blue", "red")
+
+gender <- c("Male", "Female")
+
+# Function to close the current graphics device
+# dev.off()
+
+plot(NULL,
+     xlim = c(min(wage1$educ), max(wage1$educ)), 
+     ylim = c(min(wage1$wage), max(wage1$wage)),
+     xlab = "Years of education", 
+     ylab = "Dollar per hour")
+
+for (i in 1:length(gender)) {
+  
+  points(x = wage1$educ[wage1$gender == gender[i]],
+         y = wage1$wage[wage1$gender == gender[i]],
+         pch = i,
+         col = cols[i])
+  
+}
+
+abline(reg1)
+abline(a = 0.623-2.273, b = 0.506)
+abline(a = -0.285, b = 0.575-0.178)
+
+legend("topleft",
+       legend = gender,
+       col = cols, 
+       bty = "n",
+       pch = c(1,2),
+       cex = 1)
+
+```
+

@@ -1,0 +1,36 @@
+---
+title: "Class 10"
+author: "Alessandro Bramucci"
+date: "`r format(Sys.Date(), '%d-%m-%Y')`"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      message = FALSE,
+                      warning = FALSE)
+
+library(wooldridge)
+library(stargazer)
+
+```
+
+# Title
+
+Some text...
+
+```{r, echo = FALSE}
+reg <- lm(wage ~ educ, data = wage1)
+```
+
+```{r, echo = FALSE, results='asis'}
+stargazer(reg,
+          header = FALSE,
+          type = 'latex',
+          title = 'Some title',
+          keep.stat = c("N", "rsq", "adj.rsq"))
+```
+
+Some more text...
