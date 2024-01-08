@@ -1,0 +1,60 @@
+---
+title: "Class 1"
+author: "Alessandro Bramucci"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      message = FALSE,
+                      warning = FALSE)
+
+library(stargazer)
+library(gapminder)
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+
+```
+
+```{r, echo = FALSE}
+df_graph <- gapminder %>% 
+  group_by(country) %>% 
+  mutate(pcGDPgr = c(NA, diff(gdpPercap))/lag(gdpPercap) * 100,
+         dlifeExp = c(NA, diff(lifeExp))) %>% 
+  drop_na()
+
+p <- ggplot(df_graph,
+            aes(y = dlifeExp,
+                x = pcGDPgr)) +
+  geom_point(aes(color = continent)) + 
+  geom_smooth(method = lm, se = FALSE)
+  
+p
+```
+
+```{r, echo = FALSE}
+p1 <- ggplot(df_graph,
+            aes(y = lifeExp,
+                x = pcGDPgr)) +
+  geom_point(aes(color = continent)) + 
+  geom_smooth(method = lm, se = FALSE)
+  
+p1
+```
+
+```{r, echo = FALSE, results = "asis"}
+reg1 <- lm(dlifeExp ~ pcGDPgr + relevel(continent, ref = 'Europe' ), data = df_graph)
+
+reg2 <- lm(lifeExp ~ pcGDPgr + relevel(continent, ref = 'Europe'), data = df_graph)
+
+stargazer(reg1,
+          reg2,
+          header = FALSE,
+          type = "latex",
+          title = "Gapminder.",
+          keep.stat = c("N", "rsq", "adj.rsq"))
+
+```
+

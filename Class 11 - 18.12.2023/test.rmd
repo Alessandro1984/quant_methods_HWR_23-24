@@ -1,0 +1,56 @@
+---
+title: "Class 10"
+author: "Alessandro Bramucci"
+date: "`r format(Sys.Date(), '%d-%m-%Y')`"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      message = FALSE,
+                      warning = FALSE)
+
+library(wooldridge)
+library(stargazer)
+
+```
+
+# Title
+
+Some text...
+
+```{r, echo = FALSE}
+reg1 <- lm(wage ~ educ, data = wage1)
+reg2 <- lm(wage ~ educ + female, data = wage1)
+reg3 <- lm(wage ~ educ + educ:female, data = wage1)
+reg4 <- lm(wage ~ educ + educ:female + female, data = wage1)
+```
+
+```{r, echo = FALSE, results='asis'}
+stargazer(reg1,
+          reg2,
+          reg3,
+          reg4,
+          header = FALSE,
+          type = 'latex',
+          title = 'Some title',
+          keep.stat = c("N", "rsq", "adj.rsq"))
+```
+
+```{r, echo = FALSE}
+reg_male <- lm(wage ~ educ, data = wage1[wage1$female == 0,])
+reg_female <- lm(wage ~ educ, data = wage1[wage1$female == 1,])
+```
+
+```{r, echo = FALSE, results='asis'}
+stargazer(reg_male,
+          reg_female,
+          header = FALSE,
+          type = 'latex',
+          title = 'Some title',
+          keep.stat = c("N", "rsq", "adj.rsq"))
+```
+
+Some more text...
